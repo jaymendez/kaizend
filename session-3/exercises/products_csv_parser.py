@@ -1,5 +1,6 @@
 import csv
 import argparse
+import sys
 
 
 def process_csv(directory):
@@ -15,14 +16,12 @@ def process_csv(directory):
             categoryIndex = ""
             for i, row in enumerate(csv_reader):
                 if i == 0:
-                    print(f'Column names are {", ".join(row)}')
                     categoryIndex = row.index("Categories")
                     csv_writer.writerow(row)
 
                 else:
                     if (row[categoryIndex]):
                         csv_writer.writerow(row)
-                        print(row, "\n")
 
 
 parser = argparse.ArgumentParser(description='Parses product lists.')
@@ -30,9 +29,13 @@ parser.add_argument('file', metavar='file', nargs='+',
                     help='product.csv file location')
 
 args = parser.parse_args()
-if (len(args.file) == 1):
-    fileDirectory = args.file[0]
-    print(fileDirectory)
-    process_csv(fileDirectory)
-else:
-    print("invalid arguments")
+try:
+    if (len(args.file) == 1):
+        fileDirectory = args.file[0]
+        process_csv(fileDirectory)
+    else:
+        print("invalid arguments")
+except FileNotFoundError as err:
+    print(f"Error: {err}")
+    # set exit status to 1 to indicate error
+    sys.exit(1)
